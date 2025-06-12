@@ -9,7 +9,12 @@ import {
   Ip,
   ParseIntPipe,
   DefaultValuePipe,
+  ValidationPipe,
+  Patch,
 } from '@nestjs/common';
+import { CreateUserDto } from './dtos/create-user.dto';
+import { GetUsersParamsDto } from './dtos/get-users-params.dto';
+import { PatchUserDto } from './dtos/patch-user.dto';
 
 @Controller('users')
 export class UsersController {
@@ -24,26 +29,24 @@ export class UsersController {
    * /users?limit=10&page=2 -> return page 2 with limt of pagination 10
    */
 
-  @Get('users/:id')
+  @Get(':id')
   public getUsers(
-    @Param('id', ParseIntPipe) id: number | undefined,
+    @Param() getUsersParamsDto: GetUsersParamsDto,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
   ) {
-    console.log(limit);
-    console.log(page);
+    console.log(getUsersParamsDto);
     return 'You sent a get request to users endpoint';
   }
 
   @Post()
-  public createUsers(
-    @Body() request: any,
-    @Headers() headers: any,
-    @Ip() ip: any,
-  ) {
-    console.log(request);
-    console.log(headers);
-    console.log(ip);
+  public createUsers(@Body(new ValidationPipe()) createUserDto: CreateUserDto) {
+    console.log(createUserDto);
     return 'You sent a post request to users endpoint';
+  }
+
+  @Patch()
+  public patchUsers(@Body() patchUsersDto: PatchUserDto) {
+    return patchUsersDto;
   }
 }
